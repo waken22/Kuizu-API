@@ -1,17 +1,7 @@
-const app = require('http').createServer()
-
-const cors = require('cors')
-
-const io = module.exports.io = require('socket.io')(app)
-
-let messages = []
-
+const io = require('socket.io')()
 const PORT = process.env.PORT || 3231
 
-const SocketManager = require('./SocketManager')
-
-
-app.use(cors())
+let messages = []
 
 io.on('connection', (socket) => {
   socket.on('new-message', (message) => {
@@ -23,6 +13,5 @@ io.on('connection', (socket) => {
   })
 })
 
-app.listen(PORT, () => {
-  console.log('Connected to server, PORT : ' + PORT)
-})
+io.listen(PORT)
+console.log('Listening sockets on PORT : ' + PORT)
