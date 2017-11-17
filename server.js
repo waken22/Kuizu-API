@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
     })
   socket.on('load-messages', () => {
     io.sockets.emit('chat-message', messages)
-  })z
+  })
 })
 
 app.listen(PORT, () => {
