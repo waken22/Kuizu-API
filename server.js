@@ -1,6 +1,10 @@
-const express = require('express')
 
-const PORT = process.env.PORT || 3231
+const express = require('express');
+const socketIO = require('socket.io');
+const path = require('path');
+
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX) )
@@ -19,7 +23,3 @@ io.on('connection', (socket) => {
     io.sockets.emit('chat-message', messages)
   })
 })
-
-io.listen(PORT)
-
-console.log('Listening sockets on PORT : ' + PORT)
