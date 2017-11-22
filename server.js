@@ -1,9 +1,21 @@
+const express = require('express')
+const app = express()
 
-const io = require('socket.io')()
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
+
+
+
 const PORT = process.env.PORT || 3231
 
+const routes = require('./routes')
+
+
+
+// ====== SOCKET ======= //
+
 let messages = []
-var users = []
+let users = []
 
 io.on('connection', (socket) => {
   users.push(socket.id)
@@ -31,7 +43,12 @@ io.on('connection', (socket) => {
   })
 })
 
+// ====== EXPRESS ======= //
+
+app.use(routes)
 
 
-io.listen(PORT)
-console.log('Listening sockets on PORT... : ' + PORT)
+
+http.listen(PORT)
+
+console.log('Listening in this PORT... : ' + PORT)
