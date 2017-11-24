@@ -1,15 +1,37 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
+
+require('dotenv').load()
 
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
 
+const passport = require('passport')
+const bodyParser = require('body-parser')
 
-const PORT = process.env.PORT || 3231
+const URL_DB = process.env.URL_DB
+const PORT = process.env.PORT || 3005
 
-const routes = require('./routes')
+const routesAuth = require('./routes/auth')
 
+
+// Loading database settings
+const db = require('./config/db')
+db.openUri(URL_DB)
+
+
+// Parsing body requests
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+// ====== EXPRESS ======= //
+
+app.use(cors())
+
+app.use( passport.initialize())
+app.use(routesAuth)
 
 
 // ====== SOCKET ======= //
@@ -42,10 +64,6 @@ io.on('connection', (socket) => {
     }
   })
 })
-
-// ====== EXPRESS ======= //
-
-app.use(routes)
 
 
 
