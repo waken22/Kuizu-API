@@ -40,6 +40,7 @@ let messages = []
 let users = []
 
 io.on('connection', (socket) => {
+  
   users.push(socket.id)
   const newUser = messages.push({ message: socket.id + ' has joined', author: socket.id, connection: true  })
   io.sockets.emit('get-users', users)
