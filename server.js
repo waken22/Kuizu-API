@@ -15,6 +15,7 @@ const URL_DB = process.env.URL_DB
 const PORT = process.env.PORT || 3005
 
 const routesAuth = require('./routes/auth')
+const routesPrivate = require('./routes/private')
 
 
 // Loading database settings
@@ -30,8 +31,9 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
-app.use( passport.initialize())
+app.use(passport.initialize())
 app.use(routesAuth)
+app.use(routesPrivate)
 
 
 // ====== SOCKET ======= //
@@ -41,27 +43,32 @@ let users = []
 
 io.on('connection', (socket) => {
   
-  users.push(socket.id)
-  const newUser = messages.push({ message: socket.id + ' has joined', author: socket.id, connection: true  })
-  io.sockets.emit('get-users', users)
-  
+  socket.on('new-user', (user) => {
+    // Adding the socket id
+    user.socket_id = socket.id
+    users.push(user)
+    const newUser = messages.push({ message: socket.id + ' has joined', author: socket.id, connection: true  })
+    io.sockets.emit('get-users', users)
+  })
+
   socket.on('new-message', (message) => {
-      messages.push(message)
+    messages.push(message)
     io.sockets.emit('chat-new-message', message)
-    })
+  })
 
   socket.on('load-messages', () => {
     io.sockets.emit('chat-messages', messages)
   })
+
   socket.on('disconnect', () => {
     if (socket.id) {
       users = users.filter(function(user) {
-        return user !== socket.id
+        return user.socket_id !== socket.id
       })
-      console.log(users)
-      messages.push({ message: socket.id + ' has left', author: socket.id, connection: true  })
-      io.sockets.emit('chat-new-message', { message: socket.id + ' has left', author: socket.id, connection: true  })
-      io.sockets.emit('get-users', users)
+    console.log(users)
+    messages.push({ message: socket.id + ' has left', author: socket.id, connection: true  })
+    io.sockets.emit('chat-new-message', { message: socket.id + ' has left', author: socket.id, connection: true  })
+    io.sockets.emit('get-users', users)
     }
   })
 })
