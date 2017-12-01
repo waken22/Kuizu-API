@@ -47,7 +47,12 @@ io.on('connection', (socket) => {
     // Adding the socket id
     user.socket_id = socket.id
     users.push(user)
-    const newUser = messages.push({ message: socket.id + ' has joined', author: socket.id, connection: true  })
+    const newUser = messages.push({ message: user.username + ' has joined', author: socket.id, connection: true  })
+    console.log(users, 'new-user')
+    io.sockets.emit('get-users', users)
+  })
+
+  socket.on('load-users', () => {
     io.sockets.emit('get-users', users)
   })
 
@@ -62,13 +67,23 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     if (socket.id) {
+      let auser = users.filter(function(user) {
+        console.log(user.socket_id + ' <-s_id_user ' + socket.id + ' <-s_id')
+        return user.socket_id == socket.id
+      })
+      console.log(auser)
+      console.log(' <- auser')
+      let user = auser[0]
+      console.log(user, '<- let user')
       users = users.filter(function(user) {
         return user.socket_id !== socket.id
       })
-    console.log(users)
-    messages.push({ message: socket.id + ' has left', author: socket.id, connection: true  })
-    io.sockets.emit('chat-new-message', { message: socket.id + ' has left', author: socket.id, connection: true  })
-    io.sockets.emit('get-users', users)
+      // only do things if exists in the array
+      if(user) {
+        messages.push({ message: user.username + ' has left', author: user.username, connection: true  })
+        io.sockets.emit('chat-new-message', { message: user.username + ' has left', author: user.username, connection: true  })
+        io.sockets.emit('get-users', users)
+      }
     }
   })
 })
