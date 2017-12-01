@@ -1,5 +1,3 @@
-This readme is actually under construction...
-
 ![Skylab](https://github.com/Iggy-Codes/logo-images/blob/master/logos/skylab-56.png)
 [![NodeJS](https://github.com/MarioTerron/logo-images/blob/master/logos/nodejs.png)](https://nodejs.org/)
 [![ExpressJS](https://github.com/MarioTerron/logo-images/blob/master/logos/expressjs.png)](http://expressjs.com///)
